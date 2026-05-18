@@ -44,17 +44,13 @@ np.random.seed(42)
 n = 120
 
 df = pd.DataFrame({
-
     "DAP": np.random.normal(12, 4, n),
     "Altura": np.random.normal(5, 2, n),
     "Biomasa": np.random.normal(30, 10, n),
     "Carbono": np.random.normal(14, 4, n),
-
-    "Estado": np.random.choice([
-        "Saludable",
-        "Regular",
-        "Crítico"
-    ], n)
+    "Estado": np.random.choice(
+        ["Saludable", "Regular", "Crítico"], n
+    )
 })
 
 # ------------------------------------------------
@@ -62,24 +58,13 @@ df = pd.DataFrame({
 # ------------------------------------------------
 st.sidebar.title("🌍 Navegación")
 
-predio = st.sidebar.selectbox(
-    "Selecciona el predio",
-    [
-        "Horizontes",
-        "Lomas de Dapa"
-    ]
-)
-
 modulo = st.sidebar.selectbox(
-    "Selecciona módulo",
+    "Selecciona el módulo",
     [
-        "📊 Panel de Control",
-        "📦 Parcelas",
-        "🌳 Individuos",
-        "📏 Dasometría",
-        "🌱 Biomasa",
-        "🌎 Carbono",
-        "📈 Monitoreo"
+        "📊 Panel Central",
+        "🌱 Predios",
+        "📈 Análisis",
+        "📝 Reportes"
     ]
 )
 
@@ -88,18 +73,14 @@ modulo = st.sidebar.selectbox(
 # ------------------------------------------------
 st.title("🌱 Plataforma de Restauración Ecológica")
 
-st.subheader(
-    f"Corporación Ecovida — {predio}"
-)
-
 st.markdown("---")
 
 # =================================================
-# PANEL DE CONTROL
+# PANEL CENTRAL
 # =================================================
-if modulo == "📊 Panel de Control":
+if modulo == "📊 Panel Central":
 
-    st.header("🖥️ Panel de Control")
+    st.header("📊 Panel Central")
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -140,93 +121,63 @@ if modulo == "📊 Panel de Control":
         )
 
 # =================================================
-# PARCELAS
+# PREDIOS
 # =================================================
-elif modulo == "📦 Parcelas":
+elif modulo == "🌱 Predios":
 
-    st.header("📦 Parcelas")
+    st.header("🌱 Predios")
 
-    parcelas = pd.DataFrame({
-        "Parcela": ["P1", "P2", "P3"],
-        "Área": [400, 500, 600],
-        "Supervivencia": [91, 84, 92]
+    predios = pd.DataFrame({
+        "Predio": ["Horizontes", "Lomas de Dapa"],
+        "Área (ha)": [10, 12],
+        "Estado": ["Activo", "Activo"]
     })
 
-    st.dataframe(parcelas)
+    st.dataframe(predios, use_container_width=True)
 
 # =================================================
-# INDIVIDUOS
+# ANÁLISIS
 # =================================================
-elif modulo == "🌳 Individuos":
+elif modulo == "📈 Análisis":
 
-    st.header("🌳 Individuos")
-
-    st.dataframe(df)
-
-# =================================================
-# DASOMETRÍA
-# =================================================
-elif modulo == "📏 Dasometría":
-
-    st.header("📏 Dasometría")
+    st.header("📈 Análisis")
 
     fig = px.box(
         df,
         y="DAP",
-        title="Distribución DAP"
+        title="Distribución de DAP"
     )
 
     st.plotly_chart(
         fig,
         use_container_width=True
     )
-
-# =================================================
-# BIOMASA
-# =================================================
-elif modulo == "🌱 Biomasa":
-
-    st.header("🌱 Biomasa")
-
-    fig = px.histogram(
-        df,
-        x="Biomasa",
-        title="Distribución Biomasa"
-    )
-
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
-
-# =================================================
-# CARBONO
-# =================================================
-elif modulo == "🌎 Carbono":
-
-    st.header("🌎 Carbono")
-
-    st.metric(
-        "Carbono almacenado",
-        "1.6 ton"
-    )
-
-# =================================================
-# MONITOREO
-# =================================================
-elif modulo == "📈 Monitoreo":
-
-    st.header("📈 Monitoreo")
 
     estado = df["Estado"].value_counts()
 
-    fig = px.pie(
+    fig2 = px.pie(
         values=estado.values,
         names=estado.index,
         title="Estado fitosanitario"
     )
 
     st.plotly_chart(
-        fig,
+        fig2,
         use_container_width=True
+    )
+
+# =================================================
+# REPORTES
+# =================================================
+elif modulo == "📝 Reportes":
+
+    st.header("📝 Reportes")
+
+    st.info("Aquí podrás generar y descargar reportes.")
+
+    st.download_button(
+        "📥 Descargar CSV",
+        df.to_csv(index=False),
+        file_name="reporte_ecovida.csv",
+        mime="text/csv"
     )
